@@ -15,12 +15,12 @@ class CreateProjectsTable extends Migration
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->bigIncrements('id');
-//            $table->unsignedInteger('owner_id');
+            $table->unsignedBigInteger('owner_id')->nullable();
             $table->string('title');
             $table->text('description');
             $table->timestamps();
 # user delete account delete all projects from user as well
-//            $table->foreign('owner_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('owner_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

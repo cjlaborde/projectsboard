@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
 use App\Project;
 use Illuminate\Http\Request;
 
@@ -10,7 +11,11 @@ class ProjectsController extends Controller
 
     public function index()
     {
-        $projects = Project::all();
+        # Fetch all projects
+//        $projects = Project::all();
+
+        # Only see projects from selected logged in user
+        $projects = auth()->user()->projects;
 
         return view('projects.index', compact('projects'));
     }
@@ -18,28 +23,29 @@ class ProjectsController extends Controller
     # Inject controller with Model
     public function show(Project $project)
     {
+        if (auth()->user()->isNot($project->owner))
+        {
+            abort(403);
+        }
 //        $project = Project::findOrFail(request('project'));
-
         return view('projects.show', compact('project'));
+    }
+
+    public function create()
+    {
+        return view('projects.create');
     }
 
     public function store()
     {
-        // validate
-        $attributes = request()->validate([
+        auth()->user()->projects()->create(request()->validate([
             'title' => 'required',
-            'description' => 'required',
-//            'owner_id' => 'required'
-        ]);
-
+            'description' => 'required'
+        ]));
 //        dd($attributes);
-
-        // persist
-        Project::create($attributes);
 
         // redirect
         return redirect('/projects');
-
     }
 
 

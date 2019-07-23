@@ -10,6 +10,14 @@ class User extends Authenticatable
 {
     use Notifiable;
 
+
+    /**
+     * Attributes to guard against mass assignment.
+     *
+     * @var array
+     */
+    protected $guarded = [];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -36,4 +44,9 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function projects()
+    {
+        return $this->hasMany(Project::class, 'owner_id'); // user_id
+    }
 }
